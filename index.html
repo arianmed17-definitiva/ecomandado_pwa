@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ecomandado - Tu plataforma de compras online">
+    <meta name="theme-color" content="#ff6b35">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%23ff6b35' width='192' height='192'/><text x='50%' y='50%' font-size='120' fill='white' text-anchor='middle' dominant-baseline='middle'>🛍️</text></svg>">
+    <title>Página Principal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .search-section {
+            margin-top: 30px;
+        }
+
+        .search-label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.2);
+        }
+
+        .search-button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .images-section {
+            margin-top: 50px;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .image-card {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+
+            .images-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .location-section {
+            margin-top: 50px;
+        }
+
+        .location-box {
+            background: linear-gradient(135deg, #ff8c42 0%, #e63946 100%);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .location-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .location-icon {
+            font-size: 24px;
+        }
+
+        .location-details {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .location-address {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .location-city {
+            opacity: 0.9;
+        }
+
+        .offers-section {
+            margin-top: 30px;
+        }
+
+        .offers-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .offer-card {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            aspect-ratio: 16 / 9;
+        }
+
+        .offer-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .offer-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .offer-card {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            aspect-ratio: 16 / 9;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            background-color: #f5f5f5;
+        }
+
+        .search-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .search-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛍️</div>
+            <h1 class="title">Ecomandado</h1>
+            <p class="subtitle">Encuentra lo que buscas</p>
+        </div>
+
+        <form class="search-section" onsubmit="handleSearch(event)">
+            <label class="search-label">Barra de Búsqueda</label>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Ingresa tu búsqueda..."
+                    required
+                >
+                <button type="submit" class="search-button">Buscar</button>
+            </div>
+        </form>
+
+        <div class="images-section">
+            <div class="images-grid">
+                <div class="image-card" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: #fff5e1;">
+                    🍕
+                </div>
+                <div class="image-card" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: #ffe8d6;">
+                    🍔
+                </div>
+                <div class="image-card" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: #ffeaa7;">
+                    🍟
+                </div>
+                <div class="image-card" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: #dfe6e9;">
+                    🍜
+                </div>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <div class="location-box">
+                <div class="location-title">
+                    <span class="location-icon">📍</span>
+                    <span>Ubicación Actual</span>
+                </div>
+                <div class="location-details">
+                    <div class="location-address">Calle Principal 123</div>
+                    <div class="location-city">Buenos Aires, Argentina</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="offers-section">
+            <h2 class="offers-title">Ofertas</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    🍕
+                    <div class="discount-badge">30% OFF</div>
+                </div>
+                <div class="offer-card">
+                    🍗
+                    <div class="discount-badge">50% OFF</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="offers-section">
+            <h2 class="offers-title">Compras recientes</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    🍔
+                </div>
+                <div class="offer-card">
+                    🍜
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            alert('Búsqueda: ' + searchTerm);
+            // Aquí puedes agregar la lógica para procesar la búsqueda
+            console.log('Búsqueda realizada:', searchTerm);
+        }
+
+        // Registrar el Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registrado:', registration);
+                })
+                .catch(error => {
+                    console.log('Error registrando Service Worker:', error);
+                });
+        }
+    </script>
+</body>
+</html>
