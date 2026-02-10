@@ -272,6 +272,54 @@
                 width: 100%;
             }
         }
+
+        .chat-section {
+            margin-top: 30px;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-button {
+            padding: 12px;
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .chat-button:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .chat-response {
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 80px;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 601px) {
+            .chat-buttons { flex-direction: row; }
+            .chat-button { flex: 1; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -282,19 +330,18 @@
             <p class="subtitle">Encuentra lo que buscas</p>
         </div>
 
-        <form class="search-section" onsubmit="handleSearch(event)">
-            <label class="search-label">Barra de Búsqueda</label>
-            <div class="search-container">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    id="searchInput" 
-                    placeholder="Ingresa tu búsqueda..."
-                    required
-                >
-                <button type="submit" class="search-button">Buscar</button>
+        <div class="chat-section">
+            <label class="search-label">Asistente</label>
+            <div class="chat-container">
+                <div class="chat-buttons">
+                    <button type="button" class="chat-button" onclick="showResponse('no_llego')">¿Qué hago si mi pedido no llegó?</button>
+                    <button type="button" class="chat-button" onclick="showResponse('reembolso')">Quiero hacer un reembolso</button>
+                    <button type="button" class="chat-button" onclick="showResponse('crear_cuenta')">Quiero crear una cuenta</button>
+                </div>
+
+                <div class="chat-response" id="chatResponse" aria-live="polite">Selecciona una de las preguntas para ver la respuesta.</div>
             </div>
-        </form>
+        </div>
 
         <div class="images-section">
             <div class="images-grid">
@@ -354,12 +401,20 @@
     </div>
 
     <script>
-        function handleSearch(event) {
-            event.preventDefault();
-            const searchTerm = document.getElementById('searchInput').value;
-            alert('Búsqueda: ' + searchTerm);
-            // Aquí puedes agregar la lógica para procesar la búsqueda
-            console.log('Búsqueda realizada:', searchTerm);
+        const responses = {
+            no_llego: "Lamentamos la demora. Primero verifica el estado del envío en 'Mis pedidos'. Si no hay actualización, contacta a soporte con tu número de pedido y fecha. Podemos iniciar una investigación y reembolso si corresponde.",
+            reembolso: "Para solicitar un reembolso, abre el pedido en 'Mis pedidos', selecciona 'Solicitar reembolso' y sigue los pasos. Si necesitas ayuda, contacta soporte indicando motivo y número de pedido.",
+            crear_cuenta: "Para crear una cuenta, haz clic en 'Registrarse' y completa tus datos (nombre, correo, contraseña). Verifica tu correo para activar la cuenta."
+        };
+
+        function showResponse(key) {
+            const el = document.getElementById('chatResponse');
+            if (!responses[key]) {
+                el.textContent = 'Lo siento, no tengo una respuesta para eso.';
+                return;
+            }
+            el.textContent = responses[key];
+            console.log('Asistente mostró respuesta:', key);
         }
 
         // Registrar el Service Worker para PWA
