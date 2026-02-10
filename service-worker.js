@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecomandado-v1';
+const CACHE_NAME = 'ecomandado-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -46,31 +46,39 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const acceptHeader = event.request.headers.get('accept') || '';
+  const isNavigation = event.request.mode === 'navigate' || acceptHeader.includes('text/html');
+
+  if (isNavigation) {
+    // Network-first para páginas HTML (asegura que index.html se actualice)
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          return response;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Cache-first para el resto de recursos
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Si está en cache, retornar
         if (response) {
           return response;
         }
-
         return fetch(event.request).then((response) => {
-          // Clonar la respuesta
           const responseToCache = response.clone();
-
-          // Cachear nuevas solicitudes
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
           return response;
         });
       })
-      .catch(() => {
-        // Si falla la solicitud, retornar de cache o página offline
-        return caches.match('./index.html');
-      })
+      .catch(() => caches.match('./index.html'))
   );
 });
 

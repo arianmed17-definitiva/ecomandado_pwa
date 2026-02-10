@@ -417,15 +417,40 @@
             console.log('Asistente mostró respuesta:', key);
         }
 
-        // Registrar el Service Worker para PWA
+        // Registrar el Service Worker para PWA y forzar actualización cuando haya nueva versión
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
                 .then(registration => {
                     console.log('Service Worker registrado:', registration);
+
+                    // Si ya hay un SW esperando, pedirle que salte a activo
+                    if (registration.waiting) {
+                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    }
+
+                    // Detectar nueva instalación
+                    registration.addEventListener('updatefound', () => {
+                        const installingWorker = registration.installing;
+                        installingWorker.addEventListener('statechange', () => {
+                            if (installingWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // Nueva versión instalada: pedir que active y recargar
+                                    console.log('Nueva versión disponible, solicitando skipWaiting');
+                                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            }
+                        });
+                    });
                 })
                 .catch(error => {
                     console.log('Error registrando Service Worker:', error);
                 });
+
+            // Cuando el controlador cambia (nuevo SW activo), recargar la página para obtener la nueva versión
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('controllerchange detectado, recargando página');
+                window.location.reload();
+            });
         }
     </script>
 </body>
