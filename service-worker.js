@@ -2,7 +2,8 @@ const CACHE_NAME = 'ecomandado-v2';
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './chat.js'
 ];
 
 // Instalar el Service Worker

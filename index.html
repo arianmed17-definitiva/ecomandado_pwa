@@ -273,53 +273,52 @@
             }
         }
 
-        .chat-section {
-            margin-top: 30px;
-        }
+        .chat-section { margin-top: 30px; }
 
-        .chat-container {
+        /* Chat UI styles */
+        .chat-window {
+            border: 2px solid #eaeaea;
+            border-radius: 12px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 360px;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+            color: #fff;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 12px;
         }
 
-        .chat-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .chat-title { font-weight: 700; }
 
-        .chat-button {
-            padding: 12px;
-            background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: left;
-        }
+        .chat-body { padding: 12px; background: #fafafa; flex: 1 1 auto; overflow-y: auto; }
 
-        .chat-button:hover {
-            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
-            transform: translateY(-2px);
-        }
+        .messages { display: flex; flex-direction: column; gap: 10px; }
 
-        .chat-response {
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            min-height: 80px;
-            background: #fafafa;
-            color: #333;
-            line-height: 1.5;
-        }
+        .message { max-width: 85%; padding: 10px 12px; border-radius: 12px; line-height: 1.4; }
 
-        @media (min-width: 601px) {
-            .chat-buttons { flex-direction: row; }
-            .chat-button { flex: 1; text-align: center; }
-        }
+        .message.user { background: #fff; align-self: flex-end; border: 1px solid #f0f0f0; }
+        .message.bot { background: #fff7f2; align-self: flex-start; border: 1px solid #fde2d8; }
+
+        .chat-footer { padding: 10px; display: flex; gap: 8px; align-items: center; background: #fff; }
+
+        .chat-input { flex: 1; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+
+        .send-button { padding: 10px 14px; background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+
+        .settings-button { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+
+        .typing { font-style: italic; opacity: 0.8; }
+
+        .chat-small { font-size: 13px; color: rgba(0,0,0,0.6); }
+
+        @media (max-width: 600px) { .chat-window { height: 420px; } }
     </style>
 </head>
 <body>
@@ -332,14 +331,34 @@
 
         <div class="chat-section">
             <label class="search-label">Asistente</label>
-            <div class="chat-container">
-                <div class="chat-buttons">
-                    <button type="button" class="chat-button" onclick="showResponse('no_llego')">¿Qué hago si mi pedido no llegó?</button>
-                    <button type="button" class="chat-button" onclick="showResponse('reembolso')">Quiero hacer un reembolso</button>
-                    <button type="button" class="chat-button" onclick="showResponse('crear_cuenta')">Quiero crear una cuenta</button>
+            <div class="chat-window" id="chatWindow">
+                <div class="chat-header">
+                    <div class="chat-title">Asistente</div>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <div class="chat-small">Modo: <span id="chatMode">Local</span></div>
+                        <button id="openSettings" class="settings-button">Ajustes</button>
+                    </div>
                 </div>
 
-                <div class="chat-response" id="chatResponse" aria-live="polite">Selecciona una de las preguntas para ver la respuesta.</div>
+                <div class="chat-body">
+                    <div class="messages" id="messages" aria-live="polite"></div>
+                </div>
+
+                <div class="chat-footer">
+                    <input id="chatInput" class="chat-input" placeholder="Escribe un mensaje..." aria-label="Mensaje" />
+                    <button id="sendBtn" class="send-button">Enviar</button>
+                </div>
+            </div>
+
+            <!-- Settings modal (simple) -->
+            <div id="chatSettings" style="display:none;padding:12px;margin-top:10px;background:#fff;border:1px solid #eee;border-radius:8px;">
+                <label class="search-label">URL proxy de chat (opcional)</label>
+                <input id="proxyUrl" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;" placeholder="https://mi-servidor/proxy-chat" />
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                    <button id="saveProxy" class="send-button">Guardar</button>
+                    <button id="clearProxy" class="chat-button" style="background:#f5f5f5;color:#333;">Borrar</button>
+                </div>
+                <p class="chat-small" style="margin-top:8px;">Si dejas vacío el proxy, el asistente funciona offline con respuestas locales y guardará la conversación en el dispositivo.</p>
             </div>
         </div>
 
@@ -400,41 +419,24 @@
         </div>
     </div>
 
+    <script src="chat.js"></script>
+
     <script>
-        const responses = {
-            no_llego: "Lamentamos la demora. Primero verifica el estado del envío en 'Mis pedidos'. Si no hay actualización, contacta a soporte con tu número de pedido y fecha. Podemos iniciar una investigación y reembolso si corresponde.",
-            reembolso: "Para solicitar un reembolso, abre el pedido en 'Mis pedidos', selecciona 'Solicitar reembolso' y sigue los pasos. Si necesitas ayuda, contacta soporte indicando motivo y número de pedido.",
-            crear_cuenta: "Para crear una cuenta, haz clic en 'Registrarse' y completa tus datos (nombre, correo, contraseña). Verifica tu correo para activar la cuenta."
-        };
-
-        function showResponse(key) {
-            const el = document.getElementById('chatResponse');
-            if (!responses[key]) {
-                el.textContent = 'Lo siento, no tengo una respuesta para eso.';
-                return;
-            }
-            el.textContent = responses[key];
-            console.log('Asistente mostró respuesta:', key);
-        }
-
         // Registrar el Service Worker para PWA y forzar actualización cuando haya nueva versión
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
                 .then(registration => {
                     console.log('Service Worker registrado:', registration);
 
-                    // Si ya hay un SW esperando, pedirle que salte a activo
                     if (registration.waiting) {
                         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                     }
 
-                    // Detectar nueva instalación
                     registration.addEventListener('updatefound', () => {
                         const installingWorker = registration.installing;
                         installingWorker.addEventListener('statechange', () => {
                             if (installingWorker.state === 'installed') {
                                 if (navigator.serviceWorker.controller) {
-                                    // Nueva versión instalada: pedir que active y recargar
                                     console.log('Nueva versión disponible, solicitando skipWaiting');
                                     registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                                 }
@@ -446,7 +448,6 @@
                     console.log('Error registrando Service Worker:', error);
                 });
 
-            // Cuando el controlador cambia (nuevo SW activo), recargar la página para obtener la nueva versión
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 console.log('controllerchange detectado, recargando página');
                 window.location.reload();
